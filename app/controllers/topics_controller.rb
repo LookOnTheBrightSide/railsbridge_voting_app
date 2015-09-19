@@ -28,7 +28,7 @@ class TopicsController < ApplicationController
 
     respond_to do |format|
       if @topic.save
-        format.html { redirect_to @topic, notice: 'Topic was successfully created.' }
+        format.html { redirect_to topics_path, notice: 'Topic was successfully created.' }
         format.json { render :show, status: :created, location: @topic }
       else
         format.html { render :new }
@@ -42,7 +42,7 @@ class TopicsController < ApplicationController
   def update
     respond_to do |format|
       if @topic.update(topic_params)
-        format.html { redirect_to @topic, notice: 'Topic was successfully updated.' }
+        format.html { redirect_to topics_path, notice: 'Topic was successfully updated.' }
         format.json { render :show, status: :ok, location: @topic }
       else
         format.html { render :edit }
@@ -60,6 +60,29 @@ class TopicsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  def upvote
+    #finds the topic in the database with that id and stores it in the variable @topic.
+    @topic = Topic.find(params[:id])
+    #creates a new vote for the current topic and saves it in the database.
+    @topic.votes.create
+    
+    #tells the browser to go back to topics_path (the topics list).
+    redirect_to(topics_path)
+  end
+
+  def downvote
+    @topic = Topic.find(params[:id])
+    @topic.votes.delete
+    redirect_to(topics_path)
+  end
+
+  def description
+    @description = params[:description]
+
+    render :description
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
